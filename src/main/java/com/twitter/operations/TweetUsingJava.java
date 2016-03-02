@@ -137,4 +137,36 @@ public void searchTweets(String searchTerm, int numberOfTweets) {
 	
 }
 
+@Override
+public JSONArray getTweets(int numberOfTweets) {
+	
+	HttpGet httpGet = new HttpGet(
+			"https://api.twitter.com/1.1/statuses/home_timeline.json?count=" + numberOfTweets);
+	JSONArray arr = null;
+	
+	try {
+		oAuthConsumer.sign(httpGet);
+		HttpClient httpClient = HttpClientBuilder.create().build();
+		HttpResponse httpResponse = httpClient.execute(httpGet);
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		System.out.println("Statuscode: " + statusCode + "\n" +"Reason Phrase: "
+				+ httpResponse.getStatusLine().getReasonPhrase());
+		
+		arr = new JSONArray(IOUtils.toString(httpResponse.getEntity().getContent()));
+
+		for (int i = 0; i < arr.length(); i++)
+		{
+		    String tweetText = arr.getJSONObject(i).getString("text");
+		    System.out.println("Tweet "+ (i+1) + " : "+ tweetText);
+		}
+		
+	} catch (OAuthMessageSignerException 
+			| OAuthExpectationFailedException 
+			| OAuthCommunicationException 
+			| IOException e) {
+		e.printStackTrace();
+	}
+	return arr;
+}
+
 }

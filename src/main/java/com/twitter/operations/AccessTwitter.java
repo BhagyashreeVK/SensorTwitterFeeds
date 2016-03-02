@@ -36,9 +36,7 @@ public class AccessTwitter {
 		AuthKeys authKeys = AccessTwitter.initializeAuthenticationKeys();
 		TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
 		//tweetWithJava.postToTimeline("This is a third test tweet using Java");
-		//tweetWithJava.getTweetsFromTimeline(2);
+		tweetWithJava.getTweetsFromTimeline(2);
 		//tweetWithJava.searchTweets("Maryland", 5);
-		
-
 	}
 }
