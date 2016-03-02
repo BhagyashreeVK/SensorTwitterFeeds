@@ -1,4 +1,4 @@
-package com.twitter.operations;
+package com.twitterfeeds.javamain;
 
 
 import java.io.IOException;

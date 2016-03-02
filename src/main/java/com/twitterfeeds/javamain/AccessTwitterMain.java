@@ -1,15 +1,15 @@
-package com.twitter.operations;
+package com.twitterfeeds.javamain;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class AccessTwitter {
+public class AccessTwitterMain {
 
 	public static AuthKeys initializeAuthenticationKeys() {
 		Properties properties = new Properties();
 		String propertiesFile = "AuthenticationKeys.properties";
-		InputStream inputStream = AccessTwitter.class.
+		InputStream inputStream = AccessTwitterMain.class.
 				getClassLoader().getResourceAsStream(propertiesFile);
 		AuthKeys authKeys = null;
 		try {
@@ -33,7 +33,7 @@ public class AccessTwitter {
 
 	public static void main(String[] args) {
 
-		AuthKeys authKeys = AccessTwitter.initializeAuthenticationKeys();
+		AuthKeys authKeys = AccessTwitterMain.initializeAuthenticationKeys();
 		TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
 		//tweetWithJava.postToTimeline("This is a third test tweet using Java");
 		tweetWithJava.getTweetsFromTimeline(2);
