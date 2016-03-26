@@ -1,7 +1,10 @@
 package com.twitterfeeds.javamain;
-
-
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+
+import javax.imageio.ImageIO;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
@@ -9,60 +12,73 @@ import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 
+import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class TweetUsingJava implements TwitterActionsI {
 	
-	private AuthKeys authKeys;
 	private OAuthConsumer oAuthConsumer;
 	
 	public TweetUsingJava(AuthKeys authKeys){
-		this.authKeys = authKeys;
 		oAuthConsumer = new CommonsHttpOAuthConsumer(authKeys.getConsumerKey(),
 				authKeys.getConsumerSecretKey());
 		oAuthConsumer.setTokenWithSecret(authKeys.getAccessTokenKey(), 
 				authKeys.getAccessTokenSecretKey());
 	}
 	
-	public void postToTimeline(String message) {
-		
+	public HttpResponse postTweet(String message, String imageLink) {
 		String parsedMessage = parseMessage(message);
-		HttpPost httpPost = new HttpPost(
-				"https://api.twitter.com/1.1/statuses/update.json?status=" + parsedMessage);
+		StringBuilder request = new StringBuilder("https://api.twitter.com/1.1/statuses/update.json");
+		HttpResponse httpResponse = null;
+		MultipartEntityBuilder entity =  MultipartEntityBuilder.create();
+		entity.addPart("status", new StringBody(parsedMessage, ContentType.TEXT_PLAIN));
 		try {
+		if(imageLink != null && imageLink.length() > 0){
+			URL url = new URL(imageLink);
+			//BufferedImage img = ImageIO.read(url.openStream());
+			//String tDir = System.getProperty("java.io.tmpdir"); 
+			//String path = tDir + "tmp" + ".jpg"; 
+			//File file = new File(path);
+			//ImageIO.write(img, "jpg", file);
+			//file.deleteOnExit();
+			File file = new File("/temp.jpg");
+			FileUtils.copyURLToFile(url, file);
+			entity.addPart("image", new FileBody(file));
+			//entity.addPart("media_url", url.toString());
+		}
+		HttpPost httpPost = new HttpPost(new String(request));
+		httpPost.setEntity(entity.build());
+		System.out.println(httpPost.getMethod());
+		HttpClient httpClient = HttpClientBuilder.create().build();
 			oAuthConsumer.sign(httpPost);
-			
-			HttpClient httpClient = HttpClientBuilder.create().build();
-			HttpResponse httpResponse = httpClient.execute(httpPost);
-
+			httpResponse = httpClient.execute(httpPost);
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
 			System.out.println(statusCode + ':'
 					+ httpResponse.getStatusLine().getReasonPhrase());
 			System.out.println(IOUtils.toString(httpResponse.getEntity().getContent()));
-			
 		} catch (OAuthMessageSignerException 
 				| OAuthExpectationFailedException 
 				| OAuthCommunicationException 
 				| IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		return httpResponse;
 	}
 	
 //to replace whitespaces with %20	
  public String parseMessage(String message){
-		
 		String parsedMessage = new String();
 		int whiteSpaceLoc = 0;
-		
 		for(int i=0; i < message.length(); i++ ){
 			if(message.charAt(i) == ' '){
 				parsedMessage += message.substring(whiteSpaceLoc, i) + "%20";
@@ -70,103 +86,51 @@ public class TweetUsingJava implements TwitterActionsI {
 			}
 		}
 		parsedMessage += message.substring(whiteSpaceLoc, message.length());
-		
 		return parsedMessage;
-	}
+}
 
 @Override
-public void getTweetsFromTimeline(int numberOfTweets) {
+public HttpResponse searchTweets(String searchTerm, int numberOfTweets) {
+	String parsedMessage = parseMessage(searchTerm);
+	HttpGet httpGet = new HttpGet(
+			"https://api.twitter.com/1.1/search/tweets.json?q="+ parsedMessage +"&count=" + numberOfTweets + "&lang=en");
+	HttpClient httpClient = HttpClientBuilder.create().build();
+	HttpResponse httpResponse = null;
+	try {
+		oAuthConsumer.sign(httpGet);
+		httpResponse = httpClient.execute(httpGet);
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		System.out.println("Statuscode: " + statusCode + "\n" +"Reason Phrase: "
+				+ httpResponse.getStatusLine().getReasonPhrase());
+		
+	} catch (OAuthMessageSignerException 
+			| OAuthExpectationFailedException 
+			| OAuthCommunicationException 
+			| IOException e) {
+		e.printStackTrace();
+	}
+	return httpResponse;
+}
+
+@Override
+public HttpResponse getTweets(int numberOfTweets) {
 	
 	HttpGet httpGet = new HttpGet(
 			"https://api.twitter.com/1.1/statuses/home_timeline.json?count=" + numberOfTweets);
+	HttpResponse httpResponse = null;
+	HttpClient httpClient = HttpClientBuilder.create().build();
 	try {
 		oAuthConsumer.sign(httpGet);
-		HttpClient httpClient = HttpClientBuilder.create().build();
-		HttpResponse httpResponse = httpClient.execute(httpGet);
+		httpResponse = httpClient.execute(httpGet);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		System.out.println("Statuscode: " + statusCode + "\n" +"Reason Phrase: "
 				+ httpResponse.getStatusLine().getReasonPhrase());
-		
-		JSONArray arr = new JSONArray(IOUtils.toString(httpResponse.getEntity().getContent()));
-
-		for (int i = 0; i < arr.length(); i++)
-		{
-		    String tweetText = arr.getJSONObject(i).getString("text");
-		    System.out.println("Tweet "+ (i+1) + " : "+ tweetText);
-		}
-		
 	} catch (OAuthMessageSignerException 
 			| OAuthExpectationFailedException 
 			| OAuthCommunicationException 
 			| IOException e) {
 		e.printStackTrace();
 	}
-	
+	return httpResponse;
 }
-
-@Override
-public void searchTweets(String searchTerm, int numberOfTweets) {
-	HttpGet httpGet = new HttpGet(
-			"https://api.twitter.com/1.1/search/tweets.json?q="+searchTerm +"&count=" + numberOfTweets + "&lang=en");
-	try {
-		oAuthConsumer.sign(httpGet);
-		
-		HttpClient httpClient = HttpClientBuilder.create().build();
-		HttpResponse httpResponse = httpClient.execute(httpGet);
-	
-		
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		System.out.println("Statuscode: " + statusCode + "\n" +"Reason Phrase: "
-				+ httpResponse.getStatusLine().getReasonPhrase());
-		
-		JSONObject obj = new JSONObject(IOUtils.toString(httpResponse.getEntity().getContent()));
-		JSONArray arr = obj.getJSONArray("statuses");
-
-		for (int i = 0; i < arr.length(); i++)
-		{
-		    String tweetText = arr.getJSONObject(i).getString("text");
-		    System.out.println("Tweet "+ (i+1) + " : "+ tweetText);
-		}
-		
-	} catch (OAuthMessageSignerException 
-			| OAuthExpectationFailedException 
-			| OAuthCommunicationException 
-			| IOException e) {
-		e.printStackTrace();
-	}
-	
-}
-
-@Override
-public JSONArray getTweets(int numberOfTweets) {
-	
-	HttpGet httpGet = new HttpGet(
-			"https://api.twitter.com/1.1/statuses/home_timeline.json?count=" + numberOfTweets);
-	JSONArray arr = null;
-	
-	try {
-		oAuthConsumer.sign(httpGet);
-		HttpClient httpClient = HttpClientBuilder.create().build();
-		HttpResponse httpResponse = httpClient.execute(httpGet);
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		System.out.println("Statuscode: " + statusCode + "\n" +"Reason Phrase: "
-				+ httpResponse.getStatusLine().getReasonPhrase());
-		
-		arr = new JSONArray(IOUtils.toString(httpResponse.getEntity().getContent()));
-
-		for (int i = 0; i < arr.length(); i++)
-		{
-		    String tweetText = arr.getJSONObject(i).getString("text");
-		    System.out.println("Tweet "+ (i+1) + " : "+ tweetText);
-		}
-		
-	} catch (OAuthMessageSignerException 
-			| OAuthExpectationFailedException 
-			| OAuthCommunicationException 
-			| IOException e) {
-		e.printStackTrace();
-	}
-	return arr;
-}
-
 }

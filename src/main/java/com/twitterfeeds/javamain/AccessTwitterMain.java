@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
+
 public class AccessTwitterMain {
 
 	public static AuthKeys initializeAuthenticationKeys() {
@@ -32,11 +34,12 @@ public class AccessTwitterMain {
 	}
 
 	public static void main(String[] args) {
-
 		AuthKeys authKeys = AccessTwitterMain.initializeAuthenticationKeys();
 		TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
-		//tweetWithJava.postToTimeline("This is a third test tweet using Java");
-		tweetWithJava.getTweetsFromTimeline(2);
-		//tweetWithJava.searchTweets("Maryland", 5);
+		try {
+			System.out.println(IOUtils.toString(tweetWithJava.postTweet("Hello", null).getEntity().getContent()));
+		} catch (UnsupportedOperationException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

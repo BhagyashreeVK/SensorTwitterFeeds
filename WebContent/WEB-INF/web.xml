@@ -15,5 +15,5 @@
 	<servlet-mapping>
 		<servlet-name>Jersey Web Application</servlet-name>
 		<url-pattern>/twitterfeeds/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping>	
 </web-app>
