@@ -1,4 +1,4 @@
-package com.twitterfeeds.javamain;
+package com.twitterfeeds.client;
 
 
 public class AuthKeys {

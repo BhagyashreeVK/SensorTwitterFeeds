@@ -1,4 +1,4 @@
-package com.twitterfeeds.javamain;
+package com.twitterfeeds.client;
 
 import java.io.IOException;
 import java.io.InputStream;
