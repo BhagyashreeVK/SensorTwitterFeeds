@@ -98,10 +98,10 @@ public class TwitterWebService {
 	 @GET
 	 @Path("postTweet")
 	 @Consumes(MediaType.TEXT_PLAIN)
-	 public Response postTweet(@QueryParam("text") String textToPost, @QueryParam("image") String imageURL){
+	 public Response postTweet(@QueryParam("text") String textToPost, @QueryParam("media") String mediaURL){
 		    AuthKeys authKeys = AccessTwitterMain.initializeAuthenticationKeys();
 			TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
-			HttpResponse httpResponse = tweetWithJava.postTweet(textToPost,imageURL);
+			HttpResponse httpResponse = tweetWithJava.postTweet(textToPost,mediaURL);
 			Response response = new Response();
 			if(httpResponse == null){
 				response.setResponseReason("Error while processing request");

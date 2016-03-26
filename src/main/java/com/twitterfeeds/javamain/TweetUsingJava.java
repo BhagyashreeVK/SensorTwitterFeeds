@@ -1,29 +1,23 @@
 package com.twitterfeeds.javamain;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import javax.imageio.ImageIO;
-
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
-
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class TweetUsingJava implements TwitterActionsI {
 	
@@ -36,30 +30,32 @@ public class TweetUsingJava implements TwitterActionsI {
 				authKeys.getAccessTokenSecretKey());
 	}
 	
-	public HttpResponse postTweet(String message, String imageLink) {
+	public HttpResponse postTweet(String message, String mediaLink) {
 		String parsedMessage = parseMessage(message);
-		StringBuilder request = new StringBuilder("https://api.twitter.com/1.1/statuses/update.json");
+		String media_id = new String();
+		StringBuilder request = new StringBuilder("https://api.twitter.com/1.1/statuses/update.json?status="+parsedMessage);
 		HttpResponse httpResponse = null;
-		MultipartEntityBuilder entity =  MultipartEntityBuilder.create();
-		entity.addPart("status", new StringBody(parsedMessage, ContentType.TEXT_PLAIN));
-		try {
-		if(imageLink != null && imageLink.length() > 0){
-			URL url = new URL(imageLink);
-			//BufferedImage img = ImageIO.read(url.openStream());
-			//String tDir = System.getProperty("java.io.tmpdir"); 
-			//String path = tDir + "tmp" + ".jpg"; 
-			//File file = new File(path);
-			//ImageIO.write(img, "jpg", file);
-			//file.deleteOnExit();
-			File file = new File("/temp.jpg");
-			FileUtils.copyURLToFile(url, file);
-			entity.addPart("image", new FileBody(file));
-			//entity.addPart("media_url", url.toString());
-		}
-		HttpPost httpPost = new HttpPost(new String(request));
-		httpPost.setEntity(entity.build());
-		System.out.println(httpPost.getMethod());
+		HttpPost httpPost = null;
 		HttpClient httpClient = HttpClientBuilder.create().build();
+		MultipartEntityBuilder entity =  MultipartEntityBuilder.create();
+		try {
+		//if posting media, first get media_id using upload media endpoint and then pass on the media_id update endpoint
+		if(mediaLink != null && mediaLink.length() > 0){
+			URL url = new URL(mediaLink);
+			File file = new File("/temp." + mediaLink.substring(mediaLink.length()-3));
+			FileUtils.copyURLToFile(url, file);
+			StringBuilder mediaUploadRequest = new StringBuilder("https://upload.twitter.com/1.1/media/upload.json");
+			entity.addPart("media",new FileBody(file));
+			httpPost = new HttpPost(new String(mediaUploadRequest));
+			oAuthConsumer.sign(httpPost);
+			httpPost.setEntity(entity.build());
+			httpResponse = httpClient.execute(httpPost);
+			JSONObject obj = new JSONObject(IOUtils.toString(httpResponse.getEntity().getContent()));
+			media_id = obj.getString("media_id_string");
+			request.append("&media_ids=").append(media_id);
+		}
+		httpPost = new HttpPost(new String(request));
+		System.out.println(httpPost.getMethod());
 			oAuthConsumer.sign(httpPost);
 			httpResponse = httpClient.execute(httpPost);
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -69,7 +65,8 @@ public class TweetUsingJava implements TwitterActionsI {
 		} catch (OAuthMessageSignerException 
 				| OAuthExpectationFailedException 
 				| OAuthCommunicationException 
-				| IOException e) {
+				| IOException 
+				| JSONException e) {
 			e.printStackTrace();
 		}
 		return httpResponse;
@@ -114,7 +111,6 @@ public HttpResponse searchTweets(String searchTerm, int numberOfTweets) {
 
 @Override
 public HttpResponse getTweets(int numberOfTweets) {
-	
 	HttpGet httpGet = new HttpGet(
 			"https://api.twitter.com/1.1/statuses/home_timeline.json?count=" + numberOfTweets);
 	HttpResponse httpResponse = null;
