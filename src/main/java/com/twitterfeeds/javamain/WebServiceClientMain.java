@@ -6,12 +6,12 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 
-public class AccessTwitterMain {
+public class WebServiceClientMain {
 
 	public static AuthKeys initializeAuthenticationKeys() {
 		Properties properties = new Properties();
 		String propertiesFile = "AuthenticationKeys.properties";
-		InputStream inputStream = AccessTwitterMain.class.
+		InputStream inputStream = WebServiceClientMain.class.
 				getClassLoader().getResourceAsStream(propertiesFile);
 		AuthKeys authKeys = null;
 		try {
@@ -34,7 +34,7 @@ public class AccessTwitterMain {
 	}
 
 	public static void main(String[] args) {
-		AuthKeys authKeys = AccessTwitterMain.initializeAuthenticationKeys();
+		AuthKeys authKeys = WebServiceClientMain.initializeAuthenticationKeys();
 		TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
 		try {
 			System.out.println(IOUtils.toString(tweetWithJava.postTweet("Hello", null).getEntity().getContent()));

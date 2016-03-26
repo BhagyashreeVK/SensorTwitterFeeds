@@ -14,7 +14,7 @@ import org.apache.http.HttpResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.twitterfeeds.javamain.AccessTwitterMain;
+import com.twitterfeeds.javamain.WebServiceClientMain;
 import com.twitterfeeds.javamain.AuthKeys;
 import com.twitterfeeds.javamain.TweetUsingJava;
 import com.twitterfeeds.response.Response;
@@ -27,7 +27,7 @@ public class TwitterWebService {
 	 @Consumes(MediaType.APPLICATION_XML)
 	 @Produces(MediaType.APPLICATION_XML)
 	 public Response getTweets(@QueryParam("count") Integer count){
-		    AuthKeys authKeys = AccessTwitterMain.initializeAuthenticationKeys();
+		    AuthKeys authKeys = WebServiceClientMain.initializeAuthenticationKeys();
 			TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
 			HttpResponse httpResponse = tweetWithJava.getTweets(count);
 			Response response = new Response();
@@ -60,7 +60,7 @@ public class TwitterWebService {
 	 @Consumes(MediaType.APPLICATION_XML)
 	 @Produces(MediaType.APPLICATION_XML)
 	 public Response searchTweets(@QueryParam("query") String searchQuery, @QueryParam("count") Integer count){
-		    AuthKeys authKeys = AccessTwitterMain.initializeAuthenticationKeys();
+		    AuthKeys authKeys = WebServiceClientMain.initializeAuthenticationKeys();
 			TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
 			HttpResponse httpResponse = tweetWithJava.searchTweets(searchQuery, count);
 			Response response = new Response();
@@ -94,7 +94,7 @@ public class TwitterWebService {
 	 @Path("postTweet")
 	 @Consumes(MediaType.TEXT_PLAIN)
 	 public Response postTweet(@QueryParam("text") String textToPost, @QueryParam("media") String mediaURL){
-		    AuthKeys authKeys = AccessTwitterMain.initializeAuthenticationKeys();
+		    AuthKeys authKeys = WebServiceClientMain.initializeAuthenticationKeys();
 			TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
 			HttpResponse httpResponse = tweetWithJava.postTweet(textToPost,mediaURL);
 			Response response = new Response();
