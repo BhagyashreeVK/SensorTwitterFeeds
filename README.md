@@ -33,8 +33,7 @@ B] Import project from GitHub:
 5. Right Click on Server and select Restart.
 
 Web Service Operations:
-
-There are two ways of making WS calls using this project.
+There are two ways of making web service operation calls using this project.
 
 1. Run "WebServiceClientMain.java" as Java Application.
 
