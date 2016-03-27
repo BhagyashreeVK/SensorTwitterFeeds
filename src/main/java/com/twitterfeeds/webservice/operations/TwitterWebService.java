@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -29,11 +30,23 @@ public class TwitterWebService {
 	 @Path("getTweets")
 	 @Consumes(MediaType.APPLICATION_XML)
 	 @Produces(MediaType.APPLICATION_XML)
-	 public Response getTweets(@QueryParam("count") Integer count){
-		    AuthKeys authKeys = WebServiceClientMain.initializeAuthenticationKeys();
+	 public Response getTweets(@QueryParam("count") Integer count, 
+			 @QueryParam("consumerKey") String consumerKey,
+			 @QueryParam("consumerSecretKey") String consumerSecretKey,
+			 @QueryParam("accessTokenKey") String accessTokenKey,
+			 @QueryParam("accessTokenSecretKey") String accessTokenSecretKey){
+			 AuthKeys authKeys = null;
+			 Response response = new Response();
+			 if(consumerKey != null && consumerSecretKey != null && accessTokenKey != null && accessTokenSecretKey != null){
+				 authKeys = new AuthKeys(consumerKey, consumerSecretKey, accessTokenKey, accessTokenSecretKey);
+			 } else{
+				 // for time being, if not passed through the query params, intialize automatically
+			     authKeys = WebServiceClientMain.initializeAuthenticationKeys();
+				 //response.setResponseReason("Authentication Error");
+				 //return response;
+			 }
 			TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
 			HttpResponse httpResponse = tweetWithJava.getTweets(count);
-			Response response = new Response();
 			if(httpResponse == null){
 				response.setResponseReason("Error while processing request");
 			} else {

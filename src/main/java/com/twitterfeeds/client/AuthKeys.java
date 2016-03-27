@@ -5,7 +5,7 @@ public class AuthKeys {
 	
 	public String consumerKey, consumerSecretKey, accessTokenKey, accessTokenSecretKey;
 	
-	AuthKeys(String consumerKey, String consumerSecretKey, String accessTokenKey, String accessTokenSecretKey){
+	public AuthKeys(String consumerKey, String consumerSecretKey, String accessTokenKey, String accessTokenSecretKey){
 		this.consumerKey = consumerKey;
 		this.consumerSecretKey = consumerSecretKey;
 		this.accessTokenKey = accessTokenKey;
