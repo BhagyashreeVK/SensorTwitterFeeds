@@ -38,13 +38,11 @@ public class TwitterWebService {
 			 if(consumerKey != null && consumerSecretKey != null && accessTokenKey != null && accessTokenSecretKey != null){
 				 authKeys = new AuthKeys(consumerKey, consumerSecretKey, accessTokenKey, accessTokenSecretKey);
 			 } else{
-				 // for time being, if not passed through the query params, intialize automatically
 			     authKeys = WebServiceClientMain.initializeAuthenticationKeys();
-				 //response.setResponseReason("Authentication Error");
-				 //return response;
 			 }
 			TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
-			HttpResponse httpResponse = tweetWithJava.getTweets(count);
+			int countOfTweets = count == null ? 20 : count;
+			HttpResponse httpResponse = tweetWithJava.getTweets(countOfTweets);
 			if(httpResponse == null){
 				response.setResponseReason("Error while processing request");
 			} else {
@@ -76,8 +74,13 @@ public class TwitterWebService {
 	 public Response searchTweets(@QueryParam("query") String searchQuery, @QueryParam("count") Integer count){
 		    AuthKeys authKeys = WebServiceClientMain.initializeAuthenticationKeys();
 			TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
-			HttpResponse httpResponse = tweetWithJava.searchTweets(searchQuery, count);
 			Response response = new Response();
+			if(searchQuery.isEmpty()){
+				response.setResponseReason("Please enter a valid search query");
+				return response;
+			}
+			int countOfTweets = count == null ? 15 : count;
+			HttpResponse httpResponse = tweetWithJava.searchTweets(searchQuery, countOfTweets);
 			if(httpResponse == null){
 				response.setResponseReason("Error while processing request");
 			} else {
@@ -110,8 +113,12 @@ public class TwitterWebService {
 	 public Response postTweet(@QueryParam("text") String textToPost, @QueryParam("media") String mediaURL){
 		    AuthKeys authKeys = WebServiceClientMain.initializeAuthenticationKeys();
 			TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
-			HttpResponse httpResponse = tweetWithJava.postTweet(textToPost,mediaURL);
 			Response response = new Response();
+			if(textToPost.isEmpty()){
+				response.setResponseReason("Please enter a valid status to post");
+				return response;
+			}
+			HttpResponse httpResponse = tweetWithJava.postTweet(textToPost,mediaURL);
 			if(httpResponse == null){
 				response.setResponseReason("Error while processing request");
 			} else {

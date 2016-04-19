@@ -26,7 +26,17 @@ A] Setup Tomcat Server:
       Visit default page using URL: http://localhost:8080/
    
 B] Import project from GitHub:
-1. Import this project into Eclipse IDE 
+1. Import this project into Eclipse IDE
+   a. In Eclipse, Click File -> Import
+   b. Under Git folder , select "Projects from Git". Click Next
+   c. Select "Clone URI". Click Next.
+   d. Paste the below URI of this project in the URI field-
+      https://github.com/BhagyashreeVK/SensorTwitterFeeds.git  
+      Click next
+   e. Select "master" branch. Click Next.
+   f. Set the destination directory and click next.
+   g. Select "import as general project" and click next.
+   h. Set the "project name" and click Finish.
 2. Right Click on Tomcat Server
 3. Select "Add and Remove"
 4. Select this project and click Add.
@@ -59,5 +69,5 @@ There are two ways of making web service operation calls using this project.
       The "media" parameter is optional. As of now the web service only supports posting images through this parameter, using the URL of the image. 
       The supported formats are - PNG, JPEG, BMP, WEBP, GIF, Animated GIF
       An sample operation call would look like 
-      "http://localhost:8080/SensorTwitterFeeds/twitterfeeds/postTweet?text=TestTweet&media=htt://www.tesimages.test-post.jpg"
+      "http://localhost:8080/SensorTwitterFeeds/twitterfeeds/postTweet?text=TestTweet&media=http://www.tesimages.test-post.jpg"
        
