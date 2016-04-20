@@ -37,7 +37,15 @@ public class WebServiceClientMain {
 		AuthKeys authKeys = WebServiceClientMain.initializeAuthenticationKeys();
 		TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
 		try {
-			System.out.println(IOUtils.toString(tweetWithJava.postTweet("Hello", null).getEntity().getContent()));
+			//Post tweet
+			System.out.println("== Post Tweet Response ==");
+			System.out.println(IOUtils.toString(tweetWithJava.postTweet("Hello world from server project", null).getEntity().getContent()));
+			//Search tweets
+			System.out.println("== Search Tweets Response ==");
+			System.out.println(IOUtils.toString(tweetWithJava.searchTweets("Maryland", 5).getEntity().getContent()));
+			//Get tweets from timeline
+			System.out.println("== Get Tweets Response ==");
+			System.out.println(IOUtils.toString(tweetWithJava.getTweets(10).getEntity().getContent()));
 		} catch (UnsupportedOperationException | IOException e) {
 			e.printStackTrace();
 		}
