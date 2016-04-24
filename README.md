@@ -10,24 +10,23 @@ Prerequisites For Project Setup:
 
 Project Setup Instructions:
 
-A] Setup Tomcat Server:
-1. Download Tomcat v8.0 binary distruibution from the below link:
-   http://tomcat.apache.org/download-80.cgi
-2. Extract the downloaded zip folder.
-3. In Eclipse IDE, 
-   a. Go to Servers tab.
-   b. Right click and select New->Server 
-      (OR Click on "No servers are available. Click this link to create a new server.")
-   c. Click Tomcat v8.0 Server and Next
-   d. Select Apache installation Directory and click Finish.
-   e. "Tomcat v8.0 Server at localhost [Stopped, Republish]" under Servers tab should be visible. 
-      Double click on it verify HTTP ports information. By default HTTP port is 8080.
-   f. Right click on Server and click Start. It should be up and running on port 8080.
-      Visit default page using URL: http://localhost:8080/
-      If the server is giving error 404, then please follow steps in the "Error Resolution" section below
+A] Setup Tomcat Server it is not already configured in the workspace:
+	1. Download Tomcat v8.0 binary distruibution from the below link:
+	   http://tomcat.apache.org/download-80.cgi
+	2. Extract the downloaded zip folder.
+	3. In Eclipse IDE, 
+	   a. Go to Servers tab.
+	   b. Right click and select New->Server 
+	      (OR Click on "No servers are available. Click this link to create a new server.")
+	   c. Click Tomcat v8.0 Server and Next
+	   d. Select Apache installation Directory and click Finish.
+	   e. "Tomcat v8.0 Server at localhost [Stopped, Republish]" under Servers tab should be visible. 
+	      Double click on it verify HTTP ports information. By default HTTP port is 8080.
+	   f. Right click on Server and click Start. It should be up and running on port 8080.
+	      Visit default page using URL: http://localhost:8080/
+	      If the server is giving error 404, then please follow steps in the "Error Resolution" section below
    
-B] Import project from GitHub:
-1. Import this project into Eclipse IDE
+B] Import project from GitHub into Eclipse IDE:
    a. In Eclipse, Click File -> Import
    b. Under Git folder , select "Projects from Git". Click Next
    c. Select "Clone URI". Click Next.
@@ -38,10 +37,12 @@ B] Import project from GitHub:
    f. Set the destination directory and click next.
    g. Select "import as general project" and click next.
    h. Set the "project name" and click Finish.
-2. Right Click on Tomcat Server
-3. Select "Add and Remove"
-4. Select this project and click Add.
-5. Right Click on Server and select Restart.
+ 
+C] Add project to Tomcat Server:   
+	1. Right Click on Tomcat Server
+	2. Select "Add and Remove"
+	3. Select this project and click Add.
+	4. Right Click on Server and select Restart.
 
 Web Service Operations:
 There are two ways of making web service operation calls using this project.
@@ -74,15 +75,16 @@ There are two ways of making web service operation calls using this project.
       The supported formats are - PNG, JPEG, BMP, WEBP, GIF, Animated GIF
       
       An sample operation call would look like 
-      "http://localhost:8080/SensorTwitterFeeds/twitterfeeds/postTweet?text=TestTweet&mediaLink=http://www.construplan.co.uk/wp-content/uploads/2015/07/Test-Post.jpg"
+      "http://localhost:8080/SensorTwitterFeeds/twitterfeeds/postTweet?text=TestTweet&mediaLink=http://www.construplan.co.uk/wp-content/uploads/2015/07/Test-Post.jpg" 
+                                                 OR
+      "http://localhost:8080/SensorTwitterFeeds/twitterfeeds/postTweet?text=TestTweet&mediaFile=index.png"
+      where index.png is an image file saved in src/main/resources folder.
+      
        
 Error Resolution:
 
-Initially, when configuring the local Tomcat first time, there should be no projects added to the server.
-
-
-I]Error 404 resolution steps:
-   1. Stop the server if it is running. Also remove any projects added to the server.
+I]Error 404:
+   1. Stop the server if it is running. Remove this project, if it has been added to the server.
       To remove projects: 
       a. Right click on Tomcat Server -> Select Add and Remove -> Click Remove All -> Click Finish.
       b. Right click on Tomcat Server -> Select Publish. 
