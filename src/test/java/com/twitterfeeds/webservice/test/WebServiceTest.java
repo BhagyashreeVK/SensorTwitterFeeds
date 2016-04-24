@@ -27,8 +27,8 @@ public class WebServiceTest {
 	
 	@Ignore
 	@Test
-	public void test001_postTweet() {
-		httpResponse = tweetWithJava.postTweet("Hello Twitter 3 from server project", null);
+	public void test001a_postTweet() {
+		httpResponse = tweetWithJava.postTweet("Hello Twitter 3 from server project", null,null);
 		if(httpResponse != null){
 				statusCode = httpResponse.getStatusLine().getStatusCode();
 				reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
@@ -38,6 +38,18 @@ public class WebServiceTest {
 		assertEquals("OK",reasonPhrase);
 	}
 	
+	
+	@Test
+	public void test001b_postTweet() {
+		httpResponse = tweetWithJava.postTweet("Hello Twitter 3 from server project", null,"index.png");
+		if(httpResponse != null){
+				statusCode = httpResponse.getStatusLine().getStatusCode();
+				reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
+			} 
+		assertNotNull(httpResponse);
+		assertEquals(200,statusCode);
+		assertEquals("OK",reasonPhrase);
+	}
 	
 	@Test
 	public void test002_searchTweet() {

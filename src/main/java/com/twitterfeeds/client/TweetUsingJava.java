@@ -1,12 +1,15 @@
 package com.twitterfeeds.client;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -30,7 +33,7 @@ public class TweetUsingJava implements TwitterActionsI {
 				authKeys.getAccessTokenSecretKey());
 	}
 	
-	public HttpResponse postTweet(String message, String mediaLink) {
+	public HttpResponse postTweet(String message, String mediaLink, String mediaFile) {
 		String parsedMessage = parseMessage(message);
 		String media_id = new String();
 		StringBuilder request = new StringBuilder("https://api.twitter.com/1.1/statuses/update.json?status="+parsedMessage);
@@ -40,10 +43,19 @@ public class TweetUsingJava implements TwitterActionsI {
 		MultipartEntityBuilder entity =  MultipartEntityBuilder.create();
 		try {
 		//if posting media, first get media_id using upload media endpoint and then pass on the media_id update endpoint
-		if(mediaLink != null && mediaLink.length() > 0){
-			URL url = new URL(mediaLink);
-			File file = new File("/temp." + mediaLink.substring(mediaLink.length()-3));
+		if(mediaLink != null || mediaFile != null){
+			File file;
+			URL url;
+			if(mediaLink != null){
+			 url = new URL(mediaLink);
+			file = new File("/temp." + mediaLink.substring(mediaLink.length()-3));
 			FileUtils.copyURLToFile(url, file);
+			} else {
+				url = TweetUsingJava.class.
+						getClassLoader().getResource(mediaFile);
+				file = new File(mediaFile);
+				FileUtils.copyURLToFile(url, file);
+			}
 			StringBuilder mediaUploadRequest = new StringBuilder("https://upload.twitter.com/1.1/media/upload.json");
 			entity.addPart("media",new FileBody(file));
 			httpPost = new HttpPost(new String(mediaUploadRequest));

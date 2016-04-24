@@ -24,6 +24,7 @@ A] Setup Tomcat Server:
       Double click on it verify HTTP ports information. By default HTTP port is 8080.
    f. Right click on Server and click Start. It should be up and running on port 8080.
       Visit default page using URL: http://localhost:8080/
+      If the server is giving error 404, then please follow steps in the "Error Resolution" section below
    
 B] Import project from GitHub:
 1. Import this project into Eclipse IDE
@@ -64,10 +65,31 @@ There are two ways of making web service operation calls using this project.
        An sample operation call would look like 
       "http://localhost:8080/SensorTwitterFeeds/twitterfeeds/searchTweets?query=Maryland&count=5"  
    
-   c. postTweet: This operation has two parameters - the "text" and "media"
+   c. postTweet: This operation has two parameters - "text" and second parameter could either be a "mediaFile" or a "mediaLink"
       The "text" parameter is the text of the status to be posted.
-      The "media" parameter is optional. As of now the web service only supports posting images through this parameter, using the URL of the image. 
+      The second parameter is either "mediaLink" or "mediaFile", which is optional. 
+      Only one of these could be used at a time,since only one image can be uploaded at a time using the web service.
+      "mediaLink" is the URL of the image to be posted along with the text.
+      "mediaFile" is the name of the image file saved in the resources folder of the project i.e. src/main/resources folder.
       The supported formats are - PNG, JPEG, BMP, WEBP, GIF, Animated GIF
+      
       An sample operation call would look like 
-      "http://localhost:8080/SensorTwitterFeeds/twitterfeeds/postTweet?text=TestTweet&media=http://www.tesimages.test-post.jpg"
+      "http://localhost:8080/SensorTwitterFeeds/twitterfeeds/postTweet?text=TestTweet&mediaLink=http://www.construplan.co.uk/wp-content/uploads/2015/07/Test-Post.jpg"
        
+Error Resolution:
+
+Initially, when configuring the local Tomcat first time, there should be no projects added to the server.
+
+
+I]Error 404 resolution steps:
+   1. Stop the server if it is running. Also remove any projects added to the server.
+      To remove projects: 
+      a. Right click on Tomcat Server -> Select Add and Remove -> Click Remove All -> Click Finish.
+      b. Right click on Tomcat Server -> Select Publish. 
+   2.Right click on the Tomcat Server -> Select Properties -> Click Switch Location -> Click Apply. 
+     The location should switch from "workspace metadata" to some other path. 
+   2.Double click on the Tomcat Server. An "Overview" tab will open up.
+   3.In the "Server Locations" choose "use Tomcat installation".
+   3.Click "Set deploy path to the default value". Deploy Path field should be "wtpwebapps". Save changes.
+   4.Start the server and check again for "http://localhost:8080/". The server should be error free now.
+   

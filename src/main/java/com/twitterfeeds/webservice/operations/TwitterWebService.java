@@ -1,6 +1,9 @@
 package com.twitterfeeds.webservice.operations;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.json.JSONArray;
@@ -79,6 +83,12 @@ public class TwitterWebService {
 				response.setResponseReason("Please enter a valid search query");
 				return response;
 			}
+			try {
+				searchQuery = URLEncoder.encode(searchQuery,"UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				response.setResponseReason("Please enter a valid search query");
+				return response;
+			}
 			int countOfTweets = count == null ? 15 : count;
 			HttpResponse httpResponse = tweetWithJava.searchTweets(searchQuery, countOfTweets);
 			if(httpResponse == null){
@@ -110,7 +120,7 @@ public class TwitterWebService {
 	 @GET
 	 @Path("postTweet")
 	 @Consumes(MediaType.TEXT_PLAIN)
-	 public Response postTweet(@QueryParam("text") String textToPost, @QueryParam("media") String mediaURL){
+	 public Response postTweet(@QueryParam("text") String textToPost, @QueryParam("mediaLink") String mediaURL, @QueryParam("mediaFile") String mediaFile){
 		    AuthKeys authKeys = WebServiceClientMain.initializeAuthenticationKeys();
 			TweetUsingJava tweetWithJava = new TweetUsingJava(authKeys);
 			Response response = new Response();
@@ -118,7 +128,20 @@ public class TwitterWebService {
 				response.setResponseReason("Please enter a valid status to post");
 				return response;
 			}
-			HttpResponse httpResponse = tweetWithJava.postTweet(textToPost,mediaURL);
+			
+			try {
+				textToPost = URLEncoder.encode(textToPost,"UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				response.setResponseReason("Please enter a valid search query");
+				return response;
+			}
+			
+			if(mediaURL != null && mediaFile != null){
+				response.setResponseReason("Please enter either only a media file or a media link");
+				return response;
+			}
+			
+			HttpResponse httpResponse = tweetWithJava.postTweet(textToPost,mediaURL,mediaFile);
 			if(httpResponse == null){
 				response.setResponseReason("Error while processing request");
 			} else {

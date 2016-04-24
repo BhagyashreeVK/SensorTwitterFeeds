@@ -39,7 +39,7 @@ public class WebServiceClientMain {
 		try {
 			//Post tweet
 			System.out.println("== Post Tweet Response ==");
-			System.out.println(IOUtils.toString(tweetWithJava.postTweet("Hello world from server project", null).getEntity().getContent()));
+			System.out.println(IOUtils.toString(tweetWithJava.postTweet("Hello world from server project", null, null).getEntity().getContent()));
 			//Search tweets
 			System.out.println("== Search Tweets Response ==");
 			System.out.println(IOUtils.toString(tweetWithJava.searchTweets("Maryland", 5).getEntity().getContent()));
