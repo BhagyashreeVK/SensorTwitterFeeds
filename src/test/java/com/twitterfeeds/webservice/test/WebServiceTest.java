@@ -1,13 +1,9 @@
 package com.twitterfeeds.webservice.test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import org.apache.http.HttpResponse;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
 import com.twitterfeeds.client.AuthKeys;
 import com.twitterfeeds.client.TweetUsingJava;
 import com.twitterfeeds.client.WebServiceClientMain;
@@ -25,7 +21,6 @@ public class WebServiceTest {
 		tweetWithJava = new TweetUsingJava(authKeys);
 	}
 	
-	@Ignore
 	@Test
 	public void test001a_postTweet() {
 		httpResponse = tweetWithJava.postTweet("Hello Twitter 3 from server project", null,null);
@@ -37,7 +32,6 @@ public class WebServiceTest {
 		assertEquals(200,statusCode);
 		assertEquals("OK",reasonPhrase);
 	}
-	
 	
 	@Test
 	public void test001b_postTweet() {

@@ -35,7 +35,7 @@ B] Import project from GitHub into Eclipse IDE:
       Click next
    e. Select "master" branch. Click Next.
    f. Set the destination directory and click next.
-   g. Select "import as general project" and click next.
+   g. Select "Import existing Eclipse projects" and click next.
    h. Set the "project name" and click Finish.
  
 C] Add project to Tomcat Server:   
@@ -80,6 +80,15 @@ There are two ways of making web service operation calls using this project.
       "http://localhost:8080/SensorTwitterFeeds/twitterfeeds/postTweet?text=TestTweet&mediaFile=index.png"
       where index.png is an image file saved in src/main/resources folder.
       
+Unit Test Cases:
+
+Following unit test cases are defined in the WebServiceTest.java class to test the 
+operations of the web service using "TweetUsingJava" object.
+
+1. Test 001a : Tweet only text
+   Test 001b : Tweet text and image from system
+2. Test 002 :  Search five tweets with search term "Maryland" in them.
+3. Test 003 :  Get recent three tweets posted from timeline.
        
 Error Resolution:
 
